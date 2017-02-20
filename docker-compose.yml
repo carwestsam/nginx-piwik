@@ -6,6 +6,7 @@ services:
     nginx:
         image:
             nginx
+        container_name: nginx-proxy
         networks:
             - rewire
         ports:
@@ -17,6 +18,10 @@ services:
             - ./nginx/app/nginx.conf:/app/nginx.conf
             - ./nginx/html:/var/html
             - ./nginx/app:/app
+        links:
+            - web:world
+        depends_on:
+            - web
 
     web:
         build:

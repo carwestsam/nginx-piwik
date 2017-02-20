@@ -1,14 +1,20 @@
 version: '2'
 networks:
-    rewire:
+     vpcbr:
         driver: bridge
+        ipam:
+         config:
+           - subnet: 10.5.0.0/16
+             gateway: 10.5.0.1
+
 services:
     nginx:
         image:
             nginx
         container_name: nginx-proxy
         networks:
-            - rewire
+            vpcbr:
+                ipv4_address: 10.5.0.2
         ports:
             - "80:80"
             - "443:443"
@@ -19,15 +25,31 @@ services:
             - ./nginx/html:/var/html
             - ./nginx/app:/app
         links:
-            - web:world
+            - piwik:piwik
         depends_on:
-            - web
+            - piwik
 
-    web:
-        build:
-            ./web/
+    piwik:
+        image:
+            carwestsam/connect-piwik
+        container_name:
+            piwik
         networks:
-            - rewire
+            vpcbr:
+                ipv4_address: 10.5.0.5
+
+    mysql:
+        image:
+            mysql:8
+        container_name:
+            database
+        environment:
+            - MYSQL_ROOT_PASSWORD
+        networks:
+          vpcbr:
+            ipv4_address: 10.5.0.6
+        ports:
+            - "3360:3360"
 
 
 

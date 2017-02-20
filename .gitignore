@@ -1,4 +1,6 @@
 nginx/app/certificate.crt
 nginx/app/private.key
 nginx/log/*
+.env
+
 
